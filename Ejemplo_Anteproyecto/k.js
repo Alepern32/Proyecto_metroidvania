@@ -6,7 +6,6 @@ class Main extends Phaser.Scene {
   }
 
   preload() {
-    // 1. CARGAR IMAGEN DE FONDO (MAPA)
     this.load.image("background", "assets/tilemaps/maps/mapa.png");
 
     // Spritesheets del caballero
@@ -51,10 +50,8 @@ class Main extends Phaser.Scene {
   }
 
   create() {
-    // 2. AÑADIR FONDO (MAPA)
     this.add.image(0, 0, "background").setOrigin(0, 0);
 
-    // Foco del canvas para capturar teclado
     this.game.canvas.setAttribute("tabindex", "0");
     this.game.canvas.focus();
     this.input.on("pointerdown", () => this.game.canvas.focus());    
@@ -68,9 +65,8 @@ class Main extends Phaser.Scene {
     fbGfx.generateTexture("fireball-texture", 12, 12);
     fbGfx.destroy();
 
-    // ────────────────────────────────
-    // 3. PLATAFORMAS (Colisiones invisibles ajustadas al suelo verde)
-    // ────────────────────────────────
+    // 3. PLATAFORMAS
+
     this.platforms = this.physics.add.staticGroup();
 
     // Suelo principal (base verde)
@@ -149,7 +145,7 @@ class Main extends Phaser.Scene {
     ground15.setVisible(false);
     ground15.refreshBody();
 
-    // Plataforma central (zona elevada media) - Verde
+    // Plataforma central (zona elevada media)
     const centerPlatform = this.platforms.create(325, 385, null);
     centerPlatform.setSize(10, 20);
     centerPlatform.setVisible(false);
@@ -217,9 +213,7 @@ class Main extends Phaser.Scene {
     rightFloat4.setVisible(false);
     rightFloat4.refreshBody();
 
-    // ────────────────────────────────
     //  JUGADOR (caballero)
-    // ────────────────────────────────
     this.player = this.physics.add.sprite(50, 280, "knight-idle");
     this.player.setCollideWorldBounds(true);
     this.player.body.setSize(25, 33);
@@ -231,9 +225,7 @@ class Main extends Phaser.Scene {
 
     this.physics.add.collider(this.player, this.platforms);
 
-    // ────────────────────────────────
     //  ENEMIGO (slime)
-    // ────────────────────────────────
     this.enemy = this.physics.add.sprite(550, 390, "slime");
     this.enemy.setCollideWorldBounds(true);
     this.enemy.body.setSize(20, 14);
@@ -254,9 +246,7 @@ class Main extends Phaser.Scene {
       }
     });
 
-    // ────────────────────────────────
     //  BOLAS DE FUEGO
-    // ────────────────────────────────
     this.fireballs = this.physics.add.group();
 
     this.physics.add.overlap(this.fireballs, this.enemy, (fb) => {
@@ -274,9 +264,7 @@ class Main extends Phaser.Scene {
     this.fireKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
     this.fireCooldown = false;
 
-    // ────────────────────────────────
     //  ANIMACIONES DEL CABALLERO
-    // ────────────────────────────────
     this.anims.create({
       key: "knight-idle",
       frames: this.anims.generateFrameNumbers("knight-idle", {
@@ -409,9 +397,7 @@ class Main extends Phaser.Scene {
     this.enemy.play("slime-move");
   }
 
-  // ──────────────────────────────────────────
   //  DISPARO
-  // ──────────────────────────────────────────
   shootFireball() {
     if (this.fireCooldown || this.player.isDead) return;
     this.fireCooldown = true;
@@ -447,9 +433,7 @@ class Main extends Phaser.Scene {
     fb.destroy();
   }
 
-  // ──────────────────────────────────────────
   //  DAÑO AL ENEMIGO
-  // ──────────────────────────────────────────
   hitEnemy() {
     if (!this.enemy?.active) return;
 
@@ -487,9 +471,7 @@ class Main extends Phaser.Scene {
     }
   }
 
-  // ──────────────────────────────────────────
   //  DAÑO AL JUGADOR
-  // ──────────────────────────────────────────
   hitPlayer() {
     if (this.player.invincible || this.player.isDead) return;
 
@@ -527,9 +509,7 @@ class Main extends Phaser.Scene {
     });
   }
 
-  // ──────────────────────────────────────────
   //  IA DEL SLIME
-  // ──────────────────────────────────────────
   updateEnemy(delta) {
     if (!this.enemy?.active || this.enemy.state === "hurt") return;
 
@@ -606,9 +586,7 @@ class Main extends Phaser.Scene {
     }
   }
 
-  // ──────────────────────────────────────────
   //  UPDATE
-  // ──────────────────────────────────────────
   update(time, delta) {
     if (this.player.isDead) return;
 
