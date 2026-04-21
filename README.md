@@ -33,6 +33,4 @@ http://localhost:5173
 ---
 
 ## Notas importantes
-- **No borres** la carpeta `public/` — contiene todos los assets del juego
-- **No borres** la carpeta `src/` — contiene el código fuente
 - Si algo falla, prueba a borrar `node_modules/` y ejecutar `npm install` de nuevo
