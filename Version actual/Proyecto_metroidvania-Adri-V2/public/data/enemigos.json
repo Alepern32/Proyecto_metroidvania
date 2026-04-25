@@ -1,0 +1,61 @@
+{
+  "enemigos": [
+    {
+      "id": 1,
+      "nombre": "slime",
+      "descripcion": "Un ser muy calido y amigable ten cuidado es muy pegajoso",
+      "habitat": "bosque encantado",
+      "textura": "assets/images/enemigos/slime.png",
+      "estadisticas": {
+        "vida": 20,
+        "danio": 5,
+        "defensa": 1,
+        "velocidad": 20,
+        "experiencia": 10,
+        "debilidad": []
+      },
+      "drop": {
+        "dinero": 5,
+        "probabilidad": 0.8
+      }
+    },
+    {
+      "id": 2,
+      "nombre": "planta saltarina",
+      "descripcion": "Una planta con cualidades diferentes a su tipo esta planta salta y sera un gran problema",
+      "habitat": "bosque encantado",
+      "textura": "assets/images/enemigos/planta_saltarina.png",
+      "estadisticas": {
+        "vida": 50,
+        "danio": 8.9,
+        "defensa": 2,
+        "velocidad": 30,
+        "experiencia": 15,
+        "debilidad": ["fuego", "electricidad"]
+      },
+      "drop": {
+        "dinero": 15,
+        "probabilidad": 0.6
+      }
+    },
+    {
+      "id": 3,
+      "nombre": "murcielago",
+      "descripcion": "Muy adorable en la oscuridad pero muy peligroso",
+      "habitat": "cueva",
+      "textura": "assets/images/enemigos/murcielago.png",
+      "estadisticas": {
+        "vida": 25,
+        "danio": 6,
+        "defensa": 1,
+        "velocidad": 70,
+        "experiencia": 12,
+        "debilidad": []
+      },
+      "drop": {
+        "dinero": 30,
+        "probabilidad": 0.7
+      }
+    }
+  ]
+}
