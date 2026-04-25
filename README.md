@@ -1,20 +1,42 @@
-<<<<<<< HEAD
-# React + Vite
+# Proyecto Metroidvania
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Este proyecto consiste en el desarrollo de un videojuego tipo metroidvania utilizando React para la interfaz.
 
-Currently, two official plugins are available:
+## Parte realizada
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+En esta parte del proyecto se ha trabajado principalmente en la integración entre el menú, el juego y los datos del jugador.
 
-## React Compiler
+## Funcionalidades implementadas
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Menú principal con opciones de empezar partida, continuar, opciones y salir
+- Sistema de pausa dentro del juego
+- Sistema de guardado de partida en el navegador (localStorage)
+- Sistema de carga de partida desde el navegador
+- HUD que muestra datos reales del jugador (vida, oro y nivel)
 
-## Expanding the ESLint configuration
+## Integración
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-=======
-# Proyecto_metroidvania
->>>>>>> 171a4a23e83ef39be4c4ec26fdadd4a39b193383
+Se ha conseguido conectar las distintas partes del proyecto:
+
+- El menú permite iniciar una nueva partida o continuar una existente
+- Los datos del jugador se guardan correctamente
+- Al continuar partida se cargan los datos guardados
+- La HUD muestra los datos del jugador en tiempo real
+
+## Archivos principales
+
+- `App.jsx`: controla las pantallas y los datos del jugador
+- `MenuPrincipal.jsx`: menú principal del juego
+- `Juego.jsx`: pantalla del juego con HUD
+- `MenuPausa.jsx`: menú de pausa
+- `VentanaGuardar.jsx`: ventana para guardar antes de salir
+
+## Rama
+
+Trabajo realizado en la rama:
+
+mapa_guisell
+
+## Nota
+
+El objetivo principal ha sido la integración de las distintas partes del proyecto, siguiendo las indicaciones del tutor.
