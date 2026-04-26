@@ -1,9 +1,13 @@
 export default class Enemy {
 
+  // ── Crea y configura un enemigo en la escena ──────────────────────────────
+  // Selecciona textura, ajusta hitbox según tipo y asigna stats desde JSON.
   static spawn(scene, x, eData) {
     if (!eData) return null;
 
     const nombre = eData.nombre;
+
+    // ── Selección de textura con fallback a slime ─────────────────────────
     const texKey = "enemy-" + nombre.replace(/ /g, "_");
     const texValida = scene.textures.exists(texKey) && scene.textures.get(texKey).frameTotal > 1;
     const textureKey = texValida ? texKey : "enemy-slime";
@@ -14,13 +18,14 @@ export default class Enemy {
 
     enemy.setCollideWorldBounds(true);
 
+    // ── Hitbox y offset según tipo de enemigo ─────────────────────────────
     if (nombre === "slime") {
       enemy.body.setSize(20, 14);
       enemy.body.setOffset(6, 16);
     } else if (nombre === "murcielago") {
       enemy.body.setSize(24, 16);
       enemy.body.setOffset(4, 8);
-      enemy.body.allowGravity = false;
+      enemy.body.allowGravity = false;   // El murciélago vuela, no le afecta la gravedad
     } else if (nombre === "planta saltarina") {
       enemy.body.setSize(20, 28);
       enemy.body.setOffset(6, 4);
@@ -28,6 +33,7 @@ export default class Enemy {
       enemy.body.setSize(20, 20);
     }
 
+    // ── Stats leídos del JSON de enemigos ────────────────────────────────
     enemy.tipo        = nombre;
     enemy.hp          = eData.estadisticas?.vida       || 20;
     enemy.hpMax       = enemy.hp;
@@ -38,16 +44,18 @@ export default class Enemy {
     enemy.moneyDrop   = eData.drop?.dinero             || 5;
     enemy.dropProb    = eData.drop?.probabilidad       ?? 1;
 
+    // ── Variables de IA: dirección, timers y distancia de detección ──────
     enemy.dir         = Math.random() > 0.5 ? 1 : -1;
     enemy.patrolTimer = 0;
     enemy.jumpTimer   = 0;
     enemy.chaseDist   = nombre === "murcielago" ? 250 : 180;
 
-    // Barra de vida
+    // ── Barra de vida flotante sobre el enemigo ───────────────────────────
     const BAR_W = 30, BAR_H = 4, BAR_OFF_Y = -22;
     const bg   = scene.add.rectangle(0, 0, BAR_W + 2, BAR_H + 2, 0x000000, 0.7).setDepth(49);
     const fill = scene.add.rectangle(0, 0, BAR_W, BAR_H, 0x44ff44).setOrigin(0, 0.5).setDepth(50);
 
+    // Actualiza posición y color de la barra según el HP actual
     enemy.updateHpBar = () => {
       if (!enemy.active) return;
       const pct = Math.max(0, enemy.hp / enemy.hpMax);
@@ -57,6 +65,7 @@ export default class Enemy {
       fill.setPosition(enemy.x - BAR_W / 2, enemy.y + BAR_OFF_Y);
     };
 
+    // Destruye también los gráficos de la barra al eliminar al enemigo
     const origDestroy = enemy.destroy.bind(enemy);
     enemy.destroy = () => {
       bg.destroy();
@@ -64,15 +73,15 @@ export default class Enemy {
       origDestroy();
     };
 
-    // Si no cargó la textura, tratarlo como slime para evitar crashes en animaciones
+    // ── Animación inicial ────────────────────────────────────────────────
     if (fallback) enemy.tipo = "slime";
-
     const animKey = fallback ? "slime-move" : Enemy.animMove(nombre);
     if (scene.anims.exists(animKey)) enemy.play(animKey);
 
     return enemy;
   }
 
+  // ── Devuelve la clave de animación de movimiento según tipo ───────────────
   static animMove(nombre) {
     if (nombre === "slime")            return "slime-move";
     if (nombre === "murcielago")       return "bat-fly";
@@ -80,6 +89,7 @@ export default class Enemy {
     return "slime-move";
   }
 
+  // ── Devuelve la clave de animación de daño según tipo ────────────────────
   static animHurt(nombre) {
     if (nombre === "slime")            return "slime-hurt";
     if (nombre === "murcielago")       return "bat-hurt";
@@ -87,12 +97,14 @@ export default class Enemy {
     return "slime-hurt";
   }
 
+  // ── Lógica de IA: patrulla y persecución según tipo de enemigo ───────────
   static updateAI(enemy, player, delta) {
     if (!enemy.active) return;
 
     const dx = Math.abs(enemy.x - player.x);
     const dy = Math.abs(enemy.y - player.y);
 
+    // ── Slime: persigue en horizontal, patrulla si está lejos ────────────
     if (enemy.tipo === "slime") {
 
       if (dy < 40 && dx < enemy.chaseDist) {
@@ -106,6 +118,7 @@ export default class Enemy {
         enemy.setFlipX(enemy.dir > 0);
       }
 
+    // ── Murciélago: persigue en XY, ondula al patrullar ─────────────────
     } else if (enemy.tipo === "murcielago") {
 
       if (dx < enemy.chaseDist) {
@@ -121,6 +134,7 @@ export default class Enemy {
         enemy.setVelocityY(Math.sin(enemy.patrolTimer * 0.002) * 30);
       }
 
+    // ── Planta saltarina: salta periódicamente al perseguir ──────────────
     } else if (enemy.tipo === "planta saltarina") {
 
       enemy.jumpTimer += delta;
