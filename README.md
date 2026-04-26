@@ -1,20 +1,86 @@
-<<<<<<< HEAD
-# React + Vite
+# Proyecto Metroidvania
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Juego de plataformas hecho con React, Vite y Phaser 3 para clase.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Requisitos
 
-## React Compiler
+- Node.js v18 o superior
+- npm
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## Instalación y arranque
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-=======
-# Proyecto_metroidvania
->>>>>>> 171a4a23e83ef39be4c4ec26fdadd4a39b193383
+```bash
+npm install
+npm run dev
+```
+
+Luego abre `http://localhost:5173` en el navegador.
+
+---
+
+## Estructura
+
+```
+src/
+├── Pantallas/        # Cada pantalla del juego (inicio, menú, juego, pausa, opciones)
+├── Componentes/      # Componentes reutilizables (ventana de guardar)
+├── scenes/           # Escenas de Phaser (MainScene.js)
+├── entities/         # Lógica de jugador y enemigos
+└── App.jsx           # Gestiona qué pantalla se muestra
+
+public/
+├── assets/           # Sprites y fondos
+└── data/             # JSON con stats del jugador, enemigos y posición de monedas
+```
+
+---
+
+## Controles
+
+| Tecla | Qué hace |
+|-------|----------|
+| `←` `→` | Moverse |
+| `↑` o `Espacio` | Saltar |
+| `Z` | Atacar con espada |
+| `X` | Lanzar bola de fuego |
+| `ESC` | Pausar |
+
+---
+
+## Enemigos
+
+- **Slime** — patrulla el suelo y persigue al jugador si se acerca
+- **Murciélago** — vuela y persigue en todas direcciones
+- **Planta saltarina** — salta periódicamente y persigue si detecta al jugador
+
+Todos tienen barra de vida visible encima.
+
+---
+
+## Progresión
+
+Matar enemigos da XP y oro. Al subir de nivel se recupera todo el HP y mejoran las stats. Las monedas del mapa también se pueden recoger.
+
+---
+
+## Guardado
+
+La partida se guarda en el navegador (localStorage). Guarda posición, vida, nivel, XP y oro.
+
+- Pausar → *Guardar* para guardar sin salir
+- Al intentar salir sin guardar aparece una ventana de confirmación
+- En el menú principal → *Continuar* carga la última partida
+
+---
+
+## Scripts
+
+```bash
+npm run dev      # desarrollo
+npm run build    # compilar para producción
+npm run preview  # previsualizar el build
+```
