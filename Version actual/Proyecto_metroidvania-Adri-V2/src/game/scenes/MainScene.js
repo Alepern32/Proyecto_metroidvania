@@ -8,9 +8,11 @@ export default class MainScene extends Phaser.Scene {
     super({ key: 'Main' });
   }
 
+  // ── Carga todos los assets antes de crear la escena ──────────────────────
   preload() {
     this.load.image("background", "assets/tilemaps/maps/mapa.png");
 
+    // Spritesheets del caballero (jugador)
     this.load.spritesheet("knight-idle",   "assets/Caballero/IDLE.png",     { frameWidth: 96, frameHeight: 84 });
     this.load.spritesheet("knight-run",    "assets/Caballero/RUN.png",      { frameWidth: 96, frameHeight: 84 });
     this.load.spritesheet("knight-attack", "assets/Caballero/ATTACK_1.png", { frameWidth: 96, frameHeight: 84 });
@@ -18,37 +20,42 @@ export default class MainScene extends Phaser.Scene {
     this.load.spritesheet("knight-hurt",   "assets/Caballero/HURT.png",     { frameWidth: 96, frameHeight: 84 });
     this.load.spritesheet("knight-death",  "assets/Caballero/DEATH.png",    { frameWidth: 96, frameHeight: 84 });
 
+    // Spritesheets de enemigos
     this.load.spritesheet("enemy-slime",            "assets/Enemigos/Slime_Green.png",      { frameWidth: 32, frameHeight: 32 });
     this.load.spritesheet("enemy-murcielago",       "assets/Enemigos/32x32-bat-sprite.png", { frameWidth: 32, frameHeight: 32 });
     this.load.spritesheet("enemy-planta_saltarina", "assets/Enemigos/planta_saltarina.png", { frameWidth: 32, frameHeight: 48 });
     this.load.spritesheet("coin", "assets/coin.png", { frameWidth: 16, frameHeight: 16 });
 
+    // Datos del juego en JSON
     this.load.json("coinsData",    "data/coins.json");
     this.load.json("jugadorData",  "data/jugador.json");
     this.load.json("enemigosData", "data/enemigos.json");
   }
 
+  // ── Construye el mundo del juego al iniciar la escena ────────────────────
   create() {
 
     const jData       = this.cache.json.get("jugadorData")?.jugador   || {};
     const enemigosArr = this.cache.json.get("enemigosData")?.enemigos || [];
     const cData       = this.cache.json.get("coinsData");
 
+    // ── Fondo y límites del mundo ─────────────────────────────────────────
     this.physics.world.setBounds(0, 0, 640, 480);
     this.add.image(0, 0, "background").setOrigin(0, 0);
 
+    // Asegura que el canvas recibe eventos de teclado
     this.game.canvas.setAttribute("tabindex", "0");
     this.game.canvas.focus();
     this.input.on("pointerdown", () => this.game.canvas.focus());
 
-    // Textura bola de fuego
+    // ── Genera textura de bola de fuego en tiempo de ejecución ───────────
     const fbGfx = this.make.graphics({ add: false });
     fbGfx.fillStyle(0xff6600); fbGfx.fillCircle(6, 6, 6);
     fbGfx.fillStyle(0xffff00); fbGfx.fillCircle(6, 6, 3);
     fbGfx.generateTexture("fireball-texture", 12, 12);
     fbGfx.destroy();
 
-    // Plataformas
+    // ── Plataformas invisibles que forman el suelo y niveles del mapa ─────
     this.xSuelos = [90, 125, 160, 195, 230, 265, 300, 435, 465, 495, 525, 555, 585, 615, 625];
     this.platforms = this.physics.add.staticGroup();
 
@@ -57,13 +64,13 @@ export default class MainScene extends Phaser.Scene {
       p.setSize(10, 20).setVisible(false).refreshBody();
     };
 
-    this.xSuelos.forEach(x => crearPlataforma(x, 420));
-    [325, 355, 385, 405].forEach(x => crearPlataforma(x, 385));
-    [10, 35, 64, 96].forEach(x => crearPlataforma(x, 345));
+    this.xSuelos.forEach(x => crearPlataforma(x, 420));           // Suelo principal
+    [325, 355, 385, 405].forEach(x => crearPlataforma(x, 385));   // Plataforma central
+    [10, 35, 64, 96].forEach(x => crearPlataforma(x, 345));       // Plataforma izquierda
     crearPlataforma(56, 380);
-    [470, 500, 525, 550].forEach(x => crearPlataforma(x, 330));
+    [470, 500, 525, 550].forEach(x => crearPlataforma(x, 330));   // Plataforma derecha
 
-    // Animaciones
+    // ── Animaciones del caballero (jugador) ───────────────────────────────
     this.anims.create({ key: "knight-idle",   frames: this.anims.generateFrameNumbers("knight-idle",   { start: 0, end: 6  }), frameRate: 8,  repeat: -1 });
     this.anims.create({ key: "knight-run",    frames: this.anims.generateFrameNumbers("knight-run",    { start: 0, end: 7  }), frameRate: 12, repeat: -1 });
     this.anims.create({ key: "knight-attack", frames: this.anims.generateFrameNumbers("knight-attack", { start: 0, end: 5  }), frameRate: 16, repeat: 0  });
@@ -71,6 +78,7 @@ export default class MainScene extends Phaser.Scene {
     this.anims.create({ key: "knight-hurt",   frames: this.anims.generateFrameNumbers("knight-hurt",   { start: 0, end: 3  }), frameRate: 10, repeat: 0  });
     this.anims.create({ key: "knight-death",  frames: this.anims.generateFrameNumbers("knight-death",  { start: 0, end: 11 }), frameRate: 10, repeat: 0  });
 
+    // ── Animaciones de enemigos ───────────────────────────────────────────
     this.anims.create({ key: "slime-move",  frames: this.anims.generateFrameNumbers("enemy-slime", { start: 20, end: 28 }), frameRate: 10, repeat: -1 });
     this.anims.create({ key: "slime-hurt",  frames: this.anims.generateFrameNumbers("enemy-slime", { start: 36, end: 39 }), frameRate: 10, repeat: 0  });
 
@@ -82,13 +90,13 @@ export default class MainScene extends Phaser.Scene {
 
     this.anims.create({ key: "coin-spin", frames: this.anims.generateFrameNumbers("coin", { start: 0, end: 7 }), frameRate: 10, repeat: -1 });
 
-    // Jugador
+    // ── Jugador: crea el caballero y lo colisiona con plataformas ─────────
     this.playerObj = new Player(this, 50, 280, jData);
     this.player = this.playerObj.sprite;
     this.physics.add.collider(this.player, this.platforms);
     this.player.play("knight-idle");
 
-    // Enemigos
+    // ── Enemigos: genera 50 con pesos por tipo (60% slime, 25% bat, 15% plant) ──
     this.enemies = this.physics.add.group();
     const pesos = [0.6, 0.25, 0.15];
 
@@ -103,6 +111,7 @@ export default class MainScene extends Phaser.Scene {
       Enemy.spawn(this, x, enemigosArr[idx]);
     }
 
+    // Colisiones y overlap entre jugador y enemigos
     this.physics.add.collider(this.enemies, this.platforms);
     this.physics.add.overlap(this.player, this.enemies, (p, enemy) => {
       if (!this.player.invincible && enemy.active && !this.player.isDead) {
@@ -110,7 +119,7 @@ export default class MainScene extends Phaser.Scene {
       }
     });
 
-    // Fireballs
+    // ── Bolas de fuego: colisión con enemigos y plataformas ───────────────
     this.fireballs = this.physics.add.group();
     this.physics.add.overlap(this.fireballs, this.enemies, (fb, enemy) => {
       if (fb.active) fb.destroy();
@@ -120,7 +129,7 @@ export default class MainScene extends Phaser.Scene {
       if (fb.active) fb.destroy();
     });
 
-    // Monedas
+    // ── Monedas: posiciones desde JSON, coleccionables al tocarlas ────────
     this.coins = this.physics.add.group();
     if (cData?.coins) {
       cData.coins.forEach(pos => {
@@ -135,7 +144,7 @@ export default class MainScene extends Phaser.Scene {
       this.scoreText.setText("🪙 " + this.score);
     });
 
-    // HUD
+    // ── HUD: monedas, barra de HP, nivel y barra de XP ───────────────────
     this.score = jData.dinero || 0;
     this.scoreText = this.add.text(16, 12, "🪙 " + this.score, { fontSize: "13px", fill: "#ffd700", stroke: "#000", strokeThickness: 3 }).setScrollFactor(0).setDepth(100);
 
@@ -152,13 +161,14 @@ export default class MainScene extends Phaser.Scene {
     this.updateHpBar();
     this.updateXpBar();
 
-    // Controles
-    this.cursors   = this.input.keyboard.createCursorKeys();
-    this.swordKey  = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
-    this.fireKey   = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
+    // ── Controles de teclado ──────────────────────────────────────────────
+    this.cursors   = this.input.keyboard.createCursorKeys();   // Flechas y espacio
+    this.swordKey  = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);   // Ataque espada
+    this.fireKey   = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);   // Bola de fuego
     this.fireCooldown = false;
   }
 
+  // ── Actualiza la barra de HP del jugador en el HUD ───────────────────────
   updateHpBar() {
     const p = this.player;
     const pct = Math.max(0, p.hp / p.hpMax);
@@ -167,6 +177,7 @@ export default class MainScene extends Phaser.Scene {
     this.hpValText.setText(Math.ceil(p.hp) + "/" + p.hpMax);
   }
 
+  // ── Actualiza la barra de XP y el texto de nivel en el HUD ───────────────
   updateXpBar() {
     const p = this.player;
     const pct = Math.min(1, p.xp / p.xpSiguienteNivel);
@@ -175,6 +186,7 @@ export default class MainScene extends Phaser.Scene {
     this.levelText.setText("Nv." + p.nivel);
   }
 
+  // ── Muestra texto de daño flotante que sube y desaparece ─────────────────
   spawnDamageText(x, y, amount, color) {
     if (amount <= 0) return;
     const t = this.add.text(x, y, "-" + amount, {
@@ -189,6 +201,7 @@ export default class MainScene extends Phaser.Scene {
     });
   }
 
+  // ── Aplica daño a un enemigo, gestiona muerte y recompensas ──────────────
   hitEnemy(enemy) {
     if (!enemy?.active) return;
 
@@ -199,9 +212,11 @@ export default class MainScene extends Phaser.Scene {
     this.spawnDamageText(enemy.x, enemy.y - 16, danoAplicado, "#ffffff");
     if (enemy.updateHpBar) enemy.updateHpBar();
 
+    // Efecto de parpadeo rojo al recibir daño
     enemy.setTint(0xff0000);
     this.time.delayedCall(160, () => { if (enemy.active) enemy.clearTint(); });
 
+    // ── Muerte del enemigo: drop de dinero, XP y destrucción ─────────────
     if (enemy.hp <= 0) {
       if (Math.random() < (enemy.dropProb ?? 1)) {
         this.score += enemy.moneyDrop;
@@ -213,6 +228,7 @@ export default class MainScene extends Phaser.Scene {
       return;
     }
 
+    // ── Animación de daño y knockback si el enemigo sobrevive ────────────
     try {
       const hurtAnim = Enemy.animHurt(enemy.tipo);
       const moveAnim = Enemy.animMove(enemy.tipo);
@@ -229,6 +245,7 @@ export default class MainScene extends Phaser.Scene {
     enemy.setVelocityX(enemy.x > this.player.x ? 90 : -90);
   }
 
+  // ── Lanza una bola de fuego en la dirección que mira el jugador ──────────
   shootFireball() {
     if (this.fireCooldown || this.player.isDead) return;
     this.fireCooldown = true;
@@ -236,15 +253,17 @@ export default class MainScene extends Phaser.Scene {
     const fb = this.fireballs.create(this.player.x + dir * 20, this.player.y - 10, "fireball-texture");
     fb.body.allowGravity = false;
     fb.setVelocityX(dir * 500);
-    this.time.delayedCall(2000, () => fb?.active && fb.destroy());
-    this.time.delayedCall(350, () => this.fireCooldown = false);
+    this.time.delayedCall(2000, () => fb?.active && fb.destroy());   // Se destruye tras 2 s
+    this.time.delayedCall(350, () => this.fireCooldown = false);      // Cooldown de 350 ms
   }
 
+  // ── Comprueba si el jugador acumula XP suficiente para subir de nivel ─────
   checkLevelUp() {
     const p = this.player;
     if (p.xp >= p.xpSiguienteNivel) {
       const subio = this.playerObj.subirNivel();
       if (subio) {
+        // Mensaje animado de level up
         const msg = this.add.text(p.x, p.y - 40, "⬆ LEVEL UP  Nv." + p.nivel, {
           fontSize: "18px", fill: "#ffdd00", stroke: "#000", strokeThickness: 4, fontStyle: "bold"
         }).setDepth(300);
@@ -255,11 +274,13 @@ export default class MainScene extends Phaser.Scene {
     this.updateHpBar();
   }
 
+  // ── Bucle principal: controles, movimiento y IA de enemigos ──────────────
   update(time, delta) {
     if (this.player.isDead) return;
 
     const onGround = this.player.body.blocked.down;
 
+    // ── Movimiento horizontal del caballero ───────────────────────────────
     if (this.cursors.left.isDown) {
       this.player.setVelocityX(-200);
       this.player.flipX = true;
@@ -273,11 +294,13 @@ export default class MainScene extends Phaser.Scene {
       if (onGround && !this.player.isAttacking) this.player.play("knight-idle", true);
     }
 
+    // ── Salto del caballero ───────────────────────────────────────────────
     if ((this.cursors.up.isDown || this.cursors.space.isDown) && onGround) {
       this.player.setVelocityY(-420);
       this.player.play("knight-jump", true);
     }
 
+    // ── Ataque de espada: golpea enemigos en radio de 70px ────────────────
     if (Phaser.Input.Keyboard.JustDown(this.swordKey) && !this.player.isAttacking) {
       this.player.isAttacking = true;
       this.player.play("knight-attack", true);
@@ -288,8 +311,10 @@ export default class MainScene extends Phaser.Scene {
       this.player.once("animationcomplete", () => this.player.isAttacking = false);
     }
 
+    // ── Disparo de bola de fuego ──────────────────────────────────────────
     if (Phaser.Input.Keyboard.JustDown(this.fireKey)) this.shootFireball();
 
+    // ── Actualiza IA y barra de vida de cada enemigo activo ───────────────
     this.enemies.getChildren().forEach(enemy => {
       Enemy.updateAI(enemy, this.player, delta);
       if (enemy.updateHpBar) enemy.updateHpBar();
