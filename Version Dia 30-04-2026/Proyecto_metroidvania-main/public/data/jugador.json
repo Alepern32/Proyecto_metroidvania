@@ -1,0 +1,26 @@
+{
+  "jugador": {
+    "nombre": "Little knight",
+    "nivel": 1,
+    "xp": 0,
+    "vida": 75,
+    "danio": 5,
+    "defensa": 1,
+    "velocidad": 25,
+    "dinero": 0,
+    "items": [
+      {"nombre": "Espada madera", "cantidad": 1, "danio": 5}
+    ],
+    "skills": [
+      {"nombre": "Golpe rapido", "danio": 8, "costo": 5},
+      {"nombre": "Defensa", "danio": 0, "costo": 3}
+    ],
+    "niveles": [
+      {"nivel":1, "xp_req":0, "vida_bonus":0, "danio_bonus":0},
+      {"nivel":2, "xp_req":20, "vida_bonus":10, "danio_bonus":2},
+      {"nivel":3, "xp_req":50, "vida_bonus":15, "danio_bonus":3},
+      {"nivel":4, "xp_req":150, "vida_bonus":25, "danio_bonus":4, "defensa": 2},
+      {"nivel":5, "xp_req":250, "vida_bonus":40, "danio_bonus":5, "defensa": 3}
+    ]
+  }
+}
