@@ -32,6 +32,13 @@ export default class Player {
     return entrada?.xp_req ?? 99999;
   }
 
+  // ── Recalcula xpSiguienteNivel al restaurar un nivel desde guardado ───────
+  // Necesario porque el constructor siempre parte del nivel 1 del JSON
+  recalcularNivel(nivelGuardado) {
+    this.sprite.nivel            = nivelGuardado;
+    this.sprite.xpSiguienteNivel = this.xpParaNivel(nivelGuardado + 1);
+  }
+
   // ── Aplica las bonificaciones del nivel alcanzado y restaura HP ───────────
   subirNivel() {
     const sprite = this.sprite;

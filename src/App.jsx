@@ -7,11 +7,13 @@ import MenuPausa from "./Pantallas/MenuPausa";
 import MenuPrincipal from "./Pantallas/MenuPrincipal";
 import PantallaInicio from "./Pantallas/PantallaInicio";
 
+
 function App() {
   const [pantallaActual, setPantallaActual] = useState("inicio");
   const [mostrarPausa, setMostrarPausa] = useState(false);
   const [mostrarVentanaGuardar, setMostrarVentanaGuardar] = useState(false);
   const [partidaGuardada, setPartidaGuardada] = useState(false);
+  const [esNuevaPartida, setEsNuevaPartida] = useState(false);
 
   // ── Guardar: lanza evento que MainScene escucha y guarda en localStorage ──
   function guardarPartida() {
@@ -31,14 +33,17 @@ function App() {
   function continuarPartida() {
     const raw = localStorage.getItem("partidaGuardada");
     if (raw) {
+      setEsNuevaPartida(false);
       setPantallaActual("juego");
     } else {
       alert("No hay ninguna partida guardada");
     }
   }
 
+  // ── Nueva partida: borra el guardado opcionalmente? No, simplemente arranca desde cero ──
   function empezarJuego() {
     setPartidaGuardada(false);
+    setEsNuevaPartida(true);
     setPantallaActual("juego");
   }
 
@@ -54,13 +59,10 @@ function App() {
     alert("Salir del juego");
   }
 
+  // ── AHORA SIEMPRE PREGUNTA ANTES DE SALIR AL MENÚ PRINCIPAL ───────────────
   function salirMenuPrincipal() {
-    if (partidaGuardada) {
-      setPantallaActual("menu");
-      setMostrarPausa(false);
-    } else {
-      setMostrarVentanaGuardar(true);
-    }
+    setMostrarPausa(false);          // cierra el menú de pausa
+    setMostrarVentanaGuardar(true);  // muestra la ventana de pregunta
   }
 
   function guardarYSalir() {
@@ -106,13 +108,21 @@ function App() {
         <div style={{ position: "relative", width: "100vw", height: "100vh" }}>
           <Juego
             abrirPausa={() => setMostrarPausa(true)}
+            esNuevaPartida={esNuevaPartida}
+            juegoPausado={mostrarPausa}
           />
 
           {mostrarPausa && (
-            <div style={{
-              position: "absolute", top: 0, left: 0,
-              width: "100%", height: "100%", zIndex: 200
-            }}>
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                zIndex: 200,
+              }}
+            >
               <MenuPausa
                 continuarJuego={continuarJuego}
                 guardarPartida={guardarPartida}

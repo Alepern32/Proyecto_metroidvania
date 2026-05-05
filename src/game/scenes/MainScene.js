@@ -39,18 +39,19 @@ export default class MainScene extends Phaser.Scene {
     const enemigosArr = this.cache.json.get("enemigosData")?.enemigos || [];
     const cData = this.cache.json.get("coinsData");
 
-    // ── Lee partida guardada si existe ────────────────────────────────────
-    const raw = localStorage.getItem("partidaGuardada");
+    // ── Lee la flag de nueva partida desde el registry de Phaser ─────────
+    // Si es nueva partida ignora el guardado aunque exista en localStorage
+    const esNuevaPartida = this.registry.get("esNuevaPartida");
+    const raw = esNuevaPartida ? null : localStorage.getItem("partidaGuardada");
     const save = raw ? JSON.parse(raw) : null;
 
     // ── Fondo y límites del mundo ─────────────────────────────────────────
     this.physics.world.setBounds(0, 0, 640, 480);
     this.add.image(0, 0, "background").setOrigin(0, 0);
 
-    // Asegura que el canvas recibe eventos de teclado
-    this.game.canvas.setAttribute("tabindex", "0");
-    this.game.canvas.focus();
-    this.input.on("pointerdown", () => this.game.canvas.focus());
+    // Con input.keyboard.target=window en la config de Phaser, el teclado
+    // escucha en window directamente y no depende del foco del canvas.
+    this.input.keyboard.enabled = true;
 
     // ── Genera textura de bola de fuego en tiempo de ejecución ───────────
     const fbGfx = this.make.graphics({ add: false });
@@ -100,12 +101,16 @@ export default class MainScene extends Phaser.Scene {
     this.playerObj = new Player(this, spawnX, spawnY, jData);
     this.player = this.playerObj.sprite;
 
-    // Si hay partida guardada, sobreescribe los stats con los guardados
+    // ── Si hay partida guardada, sobreescribe los stats con los guardados ─
+    // Incluye danioBase y defensa para que los bonus de nivel persistan
     if (save) {
-      this.player.hp = save.vida ?? this.player.hp;
-      this.player.hpMax = save.vidaMax ?? this.player.hpMax;
-      this.player.nivel = save.nivel ?? this.player.nivel;
-      this.player.xp = save.xp ?? this.player.xp;
+      this.player.hp        = save.vida      ?? this.player.hp;
+      this.player.hpMax     = save.vidaMax   ?? this.player.hpMax;
+      this.player.xp        = save.xp        ?? this.player.xp;
+      this.player.danioBase = save.danioBase ?? this.player.danioBase;
+      this.player.defensa   = save.defensa   ?? this.player.defensa;
+      this.playerObj.recalcularNivel(save.nivel ?? this.player.nivel);
+
     }
 
     this.physics.add.collider(this.player, this.platforms);
@@ -168,14 +173,16 @@ export default class MainScene extends Phaser.Scene {
     this.hpValText = this.add.text(102, 36, "", { fontSize: "9px", fill: "#fff", stroke: "#000", strokeThickness: 2 }).setOrigin(0.5, 0.5).setScrollFactor(0).setDepth(101);
 
     this.levelText = this.add.text(16, 50, "Nv." + this.player.nivel, { fontSize: "10px", fill: "#ffdd44", stroke: "#000", strokeThickness: 2 }).setScrollFactor(0).setDepth(100);
-    this.xpBarBg = this.add.rectangle(42, 56, 130, 8, 0x222200).setOrigin(0, 0.5).setScrollFactor(0).setDepth(100);
-    this.xpBar = this.add.rectangle(42, 56, 0, 8, 0xffdd00).setOrigin(0, 0.5).setScrollFactor(0).setDepth(100);
-    this.xpValText = this.add.text(107, 56, "", { fontSize: "9px", fill: "#fff", stroke: "#000", strokeThickness: 2 }).setOrigin(0.5, 0.5).setScrollFactor(0).setDepth(101);
+
+    this.add.text(16, 63, "XP", { fontSize: "9px", fill: "#aaddff", stroke: "#000", strokeThickness: 2 }).setScrollFactor(0).setDepth(100);
+    this.xpBarBg = this.add.rectangle(32, 68, 130, 7, 0x001133).setOrigin(0, 0.5).setScrollFactor(0).setDepth(100);
+    this.xpBar = this.add.rectangle(32, 68, 0, 7, 0x44aaff).setOrigin(0, 0.5).setScrollFactor(0).setDepth(100);
+    this.xpValText = this.add.text(97, 68, "", { fontSize: "8px", fill: "#fff", stroke: "#000", strokeThickness: 2 }).setOrigin(0.5, 0.5).setScrollFactor(0).setDepth(101);
 
     this.updateHpBar();
     this.updateXpBar();
 
-    // ── Controles ─────────────────────────────────────────────────────────
+    // ── Controles de teclado ──────────────────────────────────────────────
     this.cursors = this.input.keyboard.createCursorKeys();
     this.swordKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
     this.fireKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
@@ -185,11 +192,14 @@ export default class MainScene extends Phaser.Scene {
     // React dispara "guardarPartida" en window y Phaser lo captura aquí
     this._onGuardar = () => {
       const estado = {
-        vida: this.player.hp,
-        vidaMax: this.player.hpMax,
-        oro: this.score,
-        nivel: this.player.nivel,
-        xp: this.player.xp,
+        vida:      this.player.hp,
+        vidaMax:   this.player.hpMax,
+        oro:       this.score,
+        nivel:     this.player.nivel,
+        xp:        this.player.xp,
+        // ── Guarda también daño y defensa para que persistan los bonus de nivel ──
+        danioBase: this.player.danioBase,
+        defensa:   this.player.defensa,
         posicionX: Math.round(this.player.x),
         posicionY: Math.round(this.player.y),
       };
@@ -198,9 +208,13 @@ export default class MainScene extends Phaser.Scene {
     };
     window.addEventListener("guardarPartida", this._onGuardar);
 
-    // Limpia el listener al destruir la escena para evitar fugas de memoria
+    // ── Limpieza completa al destruir/cerrar la escena ───────────────────
     this.events.on("shutdown", () => {
       window.removeEventListener("guardarPartida", this._onGuardar);
+      // Elimina las teclas para evitar listeners duplicados al recrear Phaser
+      if (this.swordKey) this.input.keyboard.removeKey(this.swordKey);
+      if (this.fireKey) this.input.keyboard.removeKey(this.fireKey);
+      this.input.keyboard.removeAllKeys(true);
     });
   }
 
