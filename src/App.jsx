@@ -40,7 +40,7 @@ function App() {
     }
   }
 
-  // ── Nueva partida: borra el guardado opcionalmente? No, simplemente arranca desde cero ──
+  // ── Nueva partida, arranca desde cero ──
   function empezarJuego() {
     setPartidaGuardada(false);
     setEsNuevaPartida(true);
@@ -59,7 +59,6 @@ function App() {
     alert("Salir del juego");
   }
 
-  // ── AHORA SIEMPRE PREGUNTA ANTES DE SALIR AL MENÚ PRINCIPAL ───────────────
   function salirMenuPrincipal() {
     setMostrarPausa(false);          // cierra el menú de pausa
     setMostrarVentanaGuardar(true);  // muestra la ventana de pregunta
