@@ -5,7 +5,7 @@ import MainScene from "../game/scenes/MainScene";
 function Juego({ abrirPausa, esNuevaPartida, juegoPausado }) {
   const gameRef = useRef(null);
 
-  // Crear el juego UNA SOLA VEZ (al montar el componente)
+  // Crear el juego
   useEffect(() => {
     if (gameRef.current) return;
 
@@ -42,7 +42,7 @@ function Juego({ abrirPausa, esNuevaPartida, juegoPausado }) {
     gameRef.current = new Phaser.Game(config);
     window.__phaserGame = gameRef.current;
 
-    // 👇 FORZAR EL FOCO DEL TECLADO JUSTO DESPUÉS DE CREAR EL JUEGO
+    // FORZAR EL FOCO DEL TECLADO JUSTO DESPUÉS DE CREAR EL JUEGO
     setTimeout(() => {
       if (gameRef.current && gameRef.current.canvas) {
         gameRef.current.canvas.focus();
@@ -59,14 +59,14 @@ function Juego({ abrirPausa, esNuevaPartida, juegoPausado }) {
     };
   }, []);
 
-  // Controlar pausa/reanudación (esto ya existía)
+  // Controlar pausa/reanudación
   useEffect(() => {
     if (!gameRef.current) return;
     if (juegoPausado) {
       gameRef.current.loop.sleep();
     } else {
       gameRef.current.loop.wake();
-      // 👇 YA EXISTÍA: forzar foco al reanudar (lo dejamos igual)
+      // Forzar foco al reanudar
       setTimeout(() => {
         const canvas = gameRef.current?.canvas;
         if (canvas) {
@@ -77,7 +77,7 @@ function Juego({ abrirPausa, esNuevaPartida, juegoPausado }) {
     }
   }, [juegoPausado]);
 
-  // Capturar tecla Escape (ya existía)
+  // Capturar tecla Escape
   useEffect(() => {
     function detectarEscape(e) {
       if (e.key === "Escape" && !juegoPausado) {
