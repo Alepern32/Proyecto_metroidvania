@@ -32,8 +32,8 @@ http://localhost:5173
 
 ---
 
-## Notas importantes
-- Si algo falla, prueba a borrar `node_modules/` y ejecutar `npm install` de nuevo
+> [!IMPORTANT]
+> Si algo falla, prueba a borrar `node_modules/` y ejecutar `npm install` de nuevo
 
 
 ## Estructura del proyecto
