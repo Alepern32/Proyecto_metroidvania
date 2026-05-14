@@ -7,15 +7,15 @@ Juego de plataformas hecho con React, Vite y Phaser 3 para clase.
 ## Requisitos
 
 - Node.js v18 o superior
-- npm
+- pnpm
 
 ---
 
 ## Instalación y arranque
 
 ```bash
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 ```
 
 Luego abre `http://localhost:5173` en el navegador.
@@ -80,7 +80,7 @@ La partida se guarda en el navegador (localStorage). Guarda posición, vida, niv
 ## Scripts
 
 ```bash
-npm run dev      # desarrollo
-npm run build    # compilar para producción
-npm run preview  # previsualizar el build
+pnpm run dev      # desarrollo
+pnpm run build    # compilar para producción
+pnpm run preview  # previsualizar el build
 ```
