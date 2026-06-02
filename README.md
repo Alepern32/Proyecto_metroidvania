@@ -1,42 +1,102 @@
-# Proyecto Metroidvania
+# Proyecto_metroidvania
 
-Este proyecto consiste en el desarrollo de un videojuego tipo metroidvania utilizando React para la interfaz.
+# Instrucciones para ejecutar el proyecto
 
-## Parte realizada
+## Requisitos
+- Tener instalado [Node.js](https://nodejs.org/) (versión 18 o superior)
 
-En esta parte del proyecto se ha trabajado principalmente en la integración entre el menú, el juego y los datos del jugador.
+## Pasos
 
-## Funcionalidades implementadas
+### 1. Descomprime el proyecto
+Extrae el ZIP en la carpeta que quieras.
 
-- Menú principal con opciones de empezar partida, continuar, opciones y salir
-- Sistema de pausa dentro del juego
-- Sistema de guardado de partida en el navegador (localStorage)
-- Sistema de carga de partida desde el navegador
-- HUD que muestra datos reales del jugador (vida, oro y nivel)
+### 2. Abre una terminal en la carpeta del proyecto
+Haz clic derecho dentro de la carpeta y selecciona **"Abrir en terminal"** o **"Git Bash"**.
 
-## Integración
+### 3. Instala las dependencias
+```bash
+npm install
+```
+Esto descarga automáticamente todo lo necesario, incluyendo Phaser y React.
 
-Se ha conseguido conectar las distintas partes del proyecto:
+### 4. Arranca el juego
+```bash
+npm run dev
+```
 
-- El menú permite iniciar una nueva partida o continuar una existente
-- Los datos del jugador se guardan correctamente
-- Al continuar partida se cargan los datos guardados
-- La HUD muestra los datos del jugador en tiempo real
+### 5. Abre el navegador
+Ve a la dirección que aparece en la terminal, normalmente:
+```
+http://localhost:5173
+```
+
+---
+
+> [!IMPORTANT]
+> Si algo falla, prueba a borrar `node_modules/` y ejecutar `npm install` de nuevo
+
+
+## Estructura del proyecto
+
+```
+/
+├── config.js                  # Configuración principal de Phaser
+├── scenes/
+│   └── MainScene.js           # Escena principal del juego
+├── entities/
+│   ├── Player.js              # Lógica del jugador (caballero)
+│   └── Enemy.js               # Lógica de enemigos (slime, murciélago, planta)
+└── data/
+    ├── jugador.json           # Stats base del jugador y tabla de niveles
+    ├── enemigos.json          # Definiciones de enemigos (vida, daño, drop...)
+    └── coins.json             # Posiciones de monedas en el mapa
+```
+
+---
 
 ## Archivos principales
 
-- `App.jsx`: controla las pantallas y los datos del jugador
-- `MenuPrincipal.jsx`: menú principal del juego
-- `Juego.jsx`: pantalla del juego con HUD
-- `MenuPausa.jsx`: menú de pausa
-- `VentanaGuardar.jsx`: ventana para guardar antes de salir
+### `config.js`
+Configuración de arranque de Phaser 3. Define tamaño del canvas (640×480), motor de física arcade con gravedad, y registra `MainScene` como escena activa.
 
-## Rama
+### `MainScene.js`
+Escena principal que orquesta todo el juego:
+- **`preload()`** — Carga spritesheets, imágenes y archivos JSON.
+- **`create()`** — Construye plataformas, animaciones, jugador, enemigos, monedas y HUD.
+- **`update()`** — Bucle de juego: controles del jugador, IA de enemigos y colisiones.
 
-Trabajo realizado en la rama:
+### `Player.js`
+Clase que encapsula el sprite del caballero y su lógica de combate:
+- Stats (HP, daño, defensa, XP, nivel) leídos desde `jugador.json`.
+- Método `hit()` para recibir daño con invencibilidad temporal.
+- Método `subirNivel()` que aplica bonificaciones de `jugador.json`.
 
-mapa_guisell
+### `Enemy.js`
+Clase estática con tres responsabilidades:
+- **`spawn()`** — Crea un enemigo en la escena con stats y barra de vida.
+- **`updateAI()`** — Comportamiento de patrulla/persecución según tipo (slime, murciélago, planta saltarina).
+- **`animMove/animHurt()`** — Devuelve la clave de animación correcta por tipo.
 
-## Nota
+---
 
-El objetivo principal ha sido la integración de las distintas partes del proyecto, siguiendo las indicaciones del tutor.
+## Archivos JSON (`/data`)
+
+| Archivo | Contenido |
+|---|---|
+| `jugador.json` | Vida, daño, defensa, XP inicial, nivel y tabla de bonificaciones por nivel |
+| `enemigos.json` | Array de enemigos con nombre, estadísticas y probabilidad/cantidad de drop |
+| `coins.json` | Array de posiciones `{x, y}` donde aparecen monedas en el mapa |
+
+---
+
+## Controles
+
+| Tecla | Acción |
+|---|---|
+| ← → | Mover al caballero |
+| ↑ / Espacio | Saltar |
+| Z | Ataque de espada (radio 70px) |
+| X | Lanzar bola de fuego |
+
+
+
