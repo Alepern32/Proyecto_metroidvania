@@ -1,114 +1,96 @@
 import { useState } from "react";
 import "./App.css";
-import PantallaInicio from "./Pantallas/PantallaInicio";
-import MenuPrincipal from "./Pantallas/MenuPrincipal";
-import MenuPausa from "./Pantallas/MenuPausa";
-import Juego from "./Pantallas/Juego";
 import VentanaGuardar from "./Componentes/VentanaGuardar";
+import Juego from "./Pantallas/Juego";
 import MenuOpciones from "./Pantallas/MenuOpciones";
+import MenuPausa from "./Pantallas/MenuPausa";
+import MenuPrincipal from "./Pantallas/MenuPrincipal";
+import PantallaInicio from "./Pantallas/PantallaInicio";
 
 function App() {
-  // Estos son los datos con los que empieza una partida nueva
-  const datosIniciales = {
-    vida: 100,
-    oro: 0,
-    nivel: 1,
-    posicionX: 0,
-    posicionY: 0,
-  };
-
-  // Aquí controlo en qué pantalla está el juego
   const [pantallaActual, setPantallaActual] = useState("inicio");
-
-  // Esto sirve para mostrar u ocultar el menú de pausa
   const [mostrarPausa, setMostrarPausa] = useState(false);
-
-  // Esto sirve para mostrar la ventana de guardar antes de salir
   const [mostrarVentanaGuardar, setMostrarVentanaGuardar] = useState(false);
-
-  // Esto me ayuda a saber si ya se guardó la partida
   const [partidaGuardada, setPartidaGuardada] = useState(false);
 
-  // Aquí guardo los datos actuales del jugador
-  const [datosJugador, setDatosJugador] = useState(datosIniciales);
+  // 🎮 Opciones del juego
+  const [volumenMusica, setVolumenMusica] = useState(0.7);
+  const [volumenEfectos, setVolumenEfectos] = useState(0.8);
+  const [brillo, setBrillo] = useState(0.5);
+  const [dificultad, setDificultad] = useState("facil");
 
-  function empezarJuego() {
-    // Cuando empieza una partida nueva, pongo los datos iniciales
-    setDatosJugador(datosIniciales);
-    setPartidaGuardada(false);
-    setPantallaActual("juego");
+  function guardarPartida() {
+    window.dispatchEvent(new Event("guardarPartida"));
+    setTimeout(() => {
+      const guardado = localStorage.getItem("partidaGuardada");
+      if (guardado) {
+        setPartidaGuardada(true);
+        alert("Partida guardada ✅");
+      } else {
+        alert("No se pudo guardar la partida");
+      }
+    }, 100);
   }
 
   function continuarPartida() {
-    // Busco si hay una partida guardada en el navegador
-    const partida = localStorage.getItem("partidaGuardada");
-
-    if (partida) {
-      // Si existe, convierto el texto guardado otra vez en datos
-      setDatosJugador(JSON.parse(partida));
-      setPartidaGuardada(true);
+    const raw = localStorage.getItem("partidaGuardada");
+    if (raw) {
       setPantallaActual("juego");
     } else {
       alert("No hay ninguna partida guardada");
     }
   }
 
+  function empezarJuego() {
+    setPartidaGuardada(false);
+    setPantallaActual("juego");
+  }
+
   function continuarJuego() {
-    // Cierra el menú de pausa y vuelve al juego
     setMostrarPausa(false);
   }
 
   function abrirOpciones() {
-    // Cambia del menú principal a la pantalla de opciones
     setPantallaActual("opciones");
   }
 
   function salirJuego() {
-    // De momento solo muestra un aviso porque no cerramos el navegador desde React
     alert("Salir del juego");
   }
 
-  function guardarPartida() {
-    // Guardo los datos actuales del jugador en el navegador
-    localStorage.setItem("partidaGuardada", JSON.stringify(datosJugador));
-    setPartidaGuardada(true);
-    alert("Partida guardada");
-  }
-
   function salirMenuPrincipal() {
-    // Si ya se guardó, puede volver al menú directamente
     if (partidaGuardada) {
       setPantallaActual("menu");
       setMostrarPausa(false);
     } else {
-      // Si no se guardó, pregunto si quiere guardar antes de salir
       setMostrarVentanaGuardar(true);
     }
   }
 
   function guardarYSalir() {
-    // Guarda la partida y después vuelve al menú principal
-    localStorage.setItem("partidaGuardada", JSON.stringify(datosJugador));
-    setPartidaGuardada(true);
-    setMostrarVentanaGuardar(false);
-    setMostrarPausa(false);
-    setPantallaActual("menu");
+    window.dispatchEvent(new Event("guardarPartida"));
+    setTimeout(() => {
+      setPartidaGuardada(true);
+      setMostrarVentanaGuardar(false);
+      setMostrarPausa(false);
+      setPantallaActual("menu");
+    }, 100);
   }
 
   function salirSinGuardar() {
-    // Sale al menú principal sin guardar los cambios
     setMostrarVentanaGuardar(false);
     setMostrarPausa(false);
     setPantallaActual("menu");
   }
 
   function cancelarSalida() {
-    // Cierra la ventana y se queda en el juego
     setMostrarVentanaGuardar(false);
   }
 
   return (
-    <div>
+    // 🌟 AQUÍ está el brillo aplicado a TODO el juego
+    <div style={{ filter: `brightness(${0.5 + brillo})` }}>
+
       {pantallaActual === "inicio" && (
         <PantallaInicio cambiarPantalla={setPantallaActual} />
       )}
@@ -119,26 +101,46 @@ function App() {
           continuarJuego={continuarPartida}
           abrirOpciones={abrirOpciones}
           salirJuego={salirJuego}
+          volumenMusica={volumenMusica}
+          volumenEfectos={volumenEfectos}
         />
       )}
 
       {pantallaActual === "opciones" && (
-        <MenuOpciones volverMenu={() => setPantallaActual("menu")} />
+        <MenuOpciones
+          volverMenu={() => setPantallaActual("menu")}
+          volumenMusica={volumenMusica}
+          setVolumenMusica={setVolumenMusica}
+          volumenEfectos={volumenEfectos}
+          setVolumenEfectos={setVolumenEfectos}
+          brillo={brillo}
+          setBrillo={setBrillo}
+          dificultad={dificultad}
+          setDificultad={setDificultad}
+        />
       )}
 
       {pantallaActual === "juego" && (
-        <div>
-          <Juego
-            abrirPausa={() => setMostrarPausa(true)}
-            datosJugador={datosJugador}
-          />
+        <div style={{ position: "relative", width: "100vw", height: "100vh" }}>
+          <Juego abrirPausa={() => setMostrarPausa(true)} />
 
           {mostrarPausa && (
-            <MenuPausa
-              continuarJuego={continuarJuego}
-              guardarPartida={guardarPartida}
-              salirMenuPrincipal={salirMenuPrincipal}
-            />
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                zIndex: 200
+              }}
+            >
+              <MenuPausa
+                continuarJuego={continuarJuego}
+                guardarPartida={guardarPartida}
+                salirMenuPrincipal={salirMenuPrincipal}
+              />
+            </div>
           )}
 
           {mostrarVentanaGuardar && (
