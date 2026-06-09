@@ -1,0 +1,384 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  overflow: hidden;
+}
+
+.pantalla-inicio,
+.menu-principal,
+.pantalla-juego {
+  width: 100vw;
+  height: 100vh;
+}
+
+.pantalla-inicio {
+  background-color: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo-juego {
+  width: 500px;
+  animation: aparecerLogo 3s ease;
+}
+
+.menu-principal {
+  width: 100%;
+  height: 100vh;
+  background-image: url("./Imagenes/fondoMenu.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.contenido-menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: -20px;
+  z-index: 10;
+}
+
+.logo-menu {
+  width: 620px;
+  margin-bottom: -40px;
+}
+
+.contenedor-botones,
+.contenedor-botones-pausa,
+.botones-guardar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+button {
+  width: 260px;
+  height: 60px;
+  font-size: 20px;
+  font-weight: bold;
+  color: white;
+  background-image: url("./Imagenes/botonMadera.png");
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.3s;
+  text-shadow: 2px 2px 4px black;
+}
+
+button:hover {
+  transform: scale(1.06);
+}
+
+.menu-pausa {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.25);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.panel-pausa {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding-top: 110px;
+}
+
+
+
+.cadenas {
+  position: absolute;
+  top: -300px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  pointer-events: none;
+}
+
+.imagen-cadena {
+  width: 30px;
+  height: 420px;
+  object-fit: fill;
+}
+
+.hud {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  display: flex;
+  gap: 30px;
+  color: white;
+  font-size: 22px;
+  z-index: 100;
+}
+
+.fondo-ventana {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.ventana-guardar {
+  position: relative;
+  background-color: rgba(15, 15, 15, 0.95);
+  padding: 30px 40px 40px 40px;
+  border-radius: 18px;
+  color: white;
+  text-align: center;
+  min-width: 420px;
+}
+
+.ventana-guardar h2 {
+  margin: 0 0 10px 0;
+  color: white;
+}
+
+.ventana-guardar p {
+  margin: 0 0 40px 0;
+  color: white;
+}
+
+
+.murcielago {
+  position: absolute;
+  width: 150px;
+  height: auto;
+  z-index: 5;
+}
+
+.murcielago1 {
+  top: 80px;
+  left: 180px;
+  animation: moverMurcielago1 6s ease-in-out infinite;
+}
+
+.murcielago2 {
+  top: 130px;
+  left: 320px;
+  animation: moverMurcielago2 8s ease-in-out infinite;
+}
+
+.murcielago3 {
+  top: 45px;
+  left: 430px;
+  animation: moverMurcielago3 7s ease-in-out infinite;
+}
+
+.antorcha {
+  position: absolute;
+  width: 130px;
+  z-index: 4;
+}
+
+.antorcha-izquierda {
+  bottom: 120px;
+  left: 550px;
+}
+
+.antorcha-derecha {
+  bottom: 120px;
+  right: 550px;
+}
+
+.llama {
+  position: absolute;
+  width: 70px;
+  z-index: 5;
+  animation: moverLlama 1.6s infinite alternate ease-in-out;
+}
+
+.llama-izquierda {
+  bottom: 315px;
+  left: 575px;
+}
+
+.llama-derecha {
+  bottom: 315px;
+  right: 575px;
+}
+
+.pantalla-opciones {
+  width: 100vw;
+  height: 100vh;
+  background-image: url("./Imagenes/fondoMenu.png");
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.caja-opciones {
+  width: 500px;
+  background-color: rgba(20, 20, 20, 0.88);
+  border: 3px solid #6e4a2f;
+  border-radius: 20px;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.7);
+}
+
+.titulo-opciones {
+  color: #f4c542;
+  text-align: center;
+  margin: 0;
+  font-size: 42px;
+  text-shadow: 2px 2px 5px black;
+}
+
+.grupo-opciones {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.grupo-opciones label {
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.grupo-opciones input,
+.grupo-opciones select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: 2px solid #6e4a2f;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 16px;
+}
+
+.grupo-opciones select option {
+  color: black;
+}
+
+.boton-pausa {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 140px;
+  height: 50px;
+  font-size: 18px;
+  z-index: 100;
+}
+
+@keyframes moverLlama {
+  0% {
+    transform: scale(1) rotate(-1deg) translateY(0px);
+    filter: brightness(1);
+  }
+
+  25% {
+    transform: scale(1.05, 1.06) rotate(1deg) translateY(-1px);
+    filter: brightness(1.08);
+  }
+
+  50% {
+    transform: scale(0.98, 1.03) rotate(-1deg) translateY(1px);
+    filter: brightness(0.95);
+  }
+
+  75% {
+    transform: scale(1.04, 1.08) rotate(1deg) translateY(-2px);
+    filter: brightness(1.25);
+  }
+
+  100% {
+    transform: scale(1) rotate(-1deg) translateY(0px);
+    filter: brightness(1);
+  }
+}
+
+
+
+
+
+
+@keyframes moverMurcielago1 {
+  0% {
+    transform: translateX(0px) translateY(0px);
+  }
+
+  50% {
+    transform: translateX(25px) translateY(-10px);
+  }
+
+  100% {
+    transform: translateX(0px) translateY(0px);
+  }
+}
+
+@keyframes moverMurcielago2 {
+  0% {
+    transform: translateX(0px) translateY(0px);
+  }
+
+  50% {
+    transform: translateX(-20px) translateY(8px);
+  }
+
+  100% {
+    transform: translateX(0px) translateY(0px);
+  }
+}
+
+@keyframes moverMurcielago3 {
+  0% {
+    transform: translateX(0px) translateY(0px);
+  }
+
+  50% {
+    transform: translateX(18px) translateY(-12px);
+  }
+
+  100% {
+    transform: translateX(0px) translateY(0px);
+  }
+}
+
+@keyframes aparecerLogo {
+  0% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+#phaser-container canvas {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+}
