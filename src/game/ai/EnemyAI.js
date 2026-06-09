@@ -89,7 +89,7 @@ export function updateAI(enemy, player, delta) {
       enemy.setVelocityX(
         Phaser.Math.Linear(enemy.body.velocity.x, targetVX, 0.07),
       );
-      enemy.setFlipX(dir > 0);
+      enemy.setFlipX(dir < 0);
 
       if (enemy.isCharging) {
         enemy.chargeElapsed = (enemy.chargeElapsed || 0) + delta;
@@ -108,7 +108,7 @@ export function updateAI(enemy, player, delta) {
       enemy.setVelocityX(
         Phaser.Math.Linear(enemy.body.velocity.x, targetVX, 0.06),
       );
-      enemy.setFlipX(enemy.dir > 0);
+      enemy.setFlipX(enemy.dir < 0);
     }
 
     if (enemy.body.blocked.left && enemy.dir < 0) {

@@ -31,8 +31,8 @@ export default class Enemy {
     } else if (nombre === 'golem') {
       // Golem es grande: usa frameWidth 64, escalamos el sprite
       enemy.setScale(1.5);
-      enemy.body.setSize(40, 52);
-      enemy.body.setOffset(12, 8);
+      enemy.body.setSize(40, 40);
+      enemy.body.setOffset(12, 16);
     } else {
       enemy.body.setSize(20, 20);
     }
