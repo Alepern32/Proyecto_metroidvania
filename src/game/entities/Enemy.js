@@ -28,6 +28,10 @@ export default class Enemy {
       enemy.body.setSize(24, 16);
       enemy.body.setOffset(4, 8);
       enemy.body.allowGravity = false;
+    } else if (nombre === 'planta saltarina') {
+      enemy.body.setSize(20, 28);
+      enemy.body.setOffset(6, 4);
+    } else if (nombre === 'golem') {
       // Golem es grande: usa frameWidth 64, escalamos el sprite
       enemy.setScale(1.5);
       enemy.body.setSize(40, 52);
@@ -101,6 +105,7 @@ export default class Enemy {
   static animMove(nombre) {
     if (nombre === 'slime') return 'slime-move';
     if (nombre === 'murcielago') return 'bat-fly';
+    if (nombre === 'planta saltarina') return 'plant-move';
     if (nombre === 'golem') return 'golem-move';
     return 'slime-move';
   }
@@ -108,6 +113,7 @@ export default class Enemy {
   static animHurt(nombre) {
     if (nombre === 'slime') return 'slime-hurt';
     if (nombre === 'murcielago') return 'bat-hurt';
+    if (nombre === 'planta saltarina') return 'plant-hurt';
     if (nombre === 'golem') return 'golem-hurt';
     return 'slime-hurt';
   }
