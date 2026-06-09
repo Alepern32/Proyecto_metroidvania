@@ -68,48 +68,6 @@ export function updateAI(enemy, player, delta) {
       enemy.setVelocityX(Phaser.Math.Linear(enemy.body.velocity.x, vx, 0.08));
       enemy.setVelocityY(Phaser.Math.Linear(enemy.body.velocity.y, vy, 0.08));
     }
-  } else if (enemy.tipo === "planta saltarina") {
-    enemy.jumpTimer += delta;
-    const onGround = enemy.body.blocked.down;
-
-    if (adx < enemy.chaseDist && ady < 220) {
-      const dir = dx > 0 ? 1 : -1;
-      const targetVX = enemy.velocidad * 0.5 * dir;
-      enemy.setVelocityX(
-        Phaser.Math.Linear(enemy.body.velocity.x, targetVX, 0.11),
-      );
-      enemy.setFlipX(dir > 0);
-      if (onGround && enemy.jumpTimer > 1050) {
-        const jumpForce = -490 - Math.min(adx * 0.28, 130);
-        enemy.setVelocityY(jumpForce);
-        enemy.jumpTimer = 0;
-      }
-    } else {
-      enemy.patrolTimer += delta;
-      if (enemy.patrolTimer > 2500) {
-        enemy.dir *= -1;
-        enemy.patrolTimer = 0;
-      }
-      enemy.setVelocityX(
-        Phaser.Math.Linear(
-          enemy.body.velocity.x,
-          enemy.velocidad * 0.3 * enemy.dir,
-          0.09,
-        ),
-      );
-      if (onGround && enemy.jumpTimer > 2100) {
-        enemy.setVelocityY(-380);
-        enemy.jumpTimer = 0;
-      }
-      if (enemy.body.blocked.left && enemy.dir < 0) {
-        enemy.dir = 1;
-        enemy.patrolTimer = 0;
-      }
-      if (enemy.body.blocked.right && enemy.dir > 0) {
-        enemy.dir = -1;
-        enemy.patrolTimer = 0;
-      }
-    }
   } else if (enemy.tipo === "golem") {
     enemy.quakeTimer = (enemy.quakeTimer || 0) + delta;
     enemy.roarTimer = (enemy.roarTimer || 0) + delta;
